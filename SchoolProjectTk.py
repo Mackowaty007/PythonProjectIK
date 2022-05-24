@@ -1,6 +1,5 @@
 import tkinter as tk
 import math
-from turtle import goto
 
 #declare variables
 HEIGHT = 800
@@ -137,9 +136,8 @@ def main():
 		intersectionPoint = intersect(armLength1,armLength2,0,0,child4swingPos[0],child4swingPos[1])
 		arm1rot = math.pi + computeTheAngle(0,0,intersectionPoint[0],intersectionPoint[1])
 		arm2rot = math.pi + -arm1rot + computeTheAngle(intersectionPoint[0],intersectionPoint[1],child4swingPos[0],child4swingPos[1])
-	elif armLength1 + armLength2 + armLength3 > math.sqrt(math.pow(goToPoint[0],2)+math.pow(goToPoint[1],2)):
-		pass
-		#this i might fix later cuz it's  annoying as hell but i got no time to implement it
+	#elif armLength1 + armLength2 + armLength3 > math.sqrt(math.pow(goToPoint[0],2)+math.pow(goToPoint[1],2)):
+		#this i might add later cuz it's  annoying as hell but i got no time to implement it
 	else:
 		#fix a cringy division by zero bug
 		if goToPoint[0]==0:
@@ -148,7 +146,7 @@ def main():
 			goToPoint[1] = 0.01
 
 		if goToPoint[0] < 0:
-			arm1rot = math.atan(goToPoint[1]/goToPoint[0])
+			arm1rot = math.atan(goToPoint[1]/goToPoint[0]) + math.pi*2
 		else:
 			arm1rot = math.atan(goToPoint[1]/goToPoint[0]) + math.pi
 		arm2rot = 0
