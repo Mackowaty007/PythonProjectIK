@@ -1,5 +1,7 @@
 import tkinter as tk
 import math
+import serial
+import time
 
 #declare variables
 HEIGHT = 800
@@ -59,11 +61,16 @@ def intersect(radius1,radius2,x1,y1,x2,y2):
 	P2 = [x1 + x * ex + y * ey,  y1 + x * ey - y * ex]
 	return P2
 
+#tkinter init
 root = tk.Tk()
 root.title("robotic arm")
 root.geometry("800x800")
 canvas=tk.Canvas(root,width=WIDTH,height=HEIGHT)
 canvas.pack()
+
+#serial comunications init
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+ser.reset_input_buffer()
 
 def onKeyPress(event):
 	global rotationOfChild4
@@ -103,6 +110,7 @@ def main():
 	global goToPoint
 	global child4swingPos
 	global rotationOfChild4
+
 	#clear the screen
 	canvas.delete("all")
 
@@ -153,12 +161,20 @@ def main():
 	arm2rot = max(min(arm2rot,maxServoAngle[2]),minServoAngle[2])
 	arm3rot = max(min(arm3rot,maxServoAngle[3]),minServoAngle[3])
 	
-	trueBaseRot = (baseRot/math.pi)*100
-	true1rot = ((arm1rot/math.pi)*100)-100
-	true2rot = ((arm2rot/math.pi)*100)+50
-	true3rot = ((arm3rot/math.pi)*100)+50
-	print("1: " + str(true1rot) + "2: " + str(true2rot) + "3: " + str(true3rot))
+	trueBaseRot = int(baseRot/math.pi*180)+90
+	true1rot = int((arm1rot/math.pi)*180)-180
+	true2rot = int((arm2rot/math.pi)*180)+90
+	true3rot = int((arm3rot/math.pi)*180)+90
+	#print("1: " + str(true1rot) + "2: " + str(true2rot) + "3: " + str(true3rot))
 	
+	#serial communication stuff
+	ser.write(bytes(str(true1rot) + "\n",'utf-8'))
+	ser.write(bytes(str(true2rot) + "\n",'utf-8'))
+	ser.write(bytes(str(true3rot) + "\n",'utf-8'))
+	ser.write(bytes(str(trueBaseRot) + "\n",'utf-8'))
+	line = ser.readline().decode('utf-8').rstrip()
+	#print (line)
+
 	#draw
 	#the floor
 	canvas.create_rectangle(0, HEIGHT/2-floorLevel, WIDTH, HEIGHT, fill='#00300a')
